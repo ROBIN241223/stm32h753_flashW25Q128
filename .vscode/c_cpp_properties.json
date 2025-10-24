@@ -1,0 +1,39 @@
+{
+  "configurations": [
+    {
+      "name": "linux-gcc-x64",
+      "includePath": [
+        "${workspaceFolder}/**"
+      ],
+      "defines": [
+        "USE_HAL_DRIVER",
+        "STM32H753xx",
+        "DEBUG",
+        "QSPI_ENABLE_XIP=1",
+        "QSPI_ENABLE_QUAD=1",
+        "INTERNAL_BOOT_STUB=1"
+      ],
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerArgs": [
+        "-mcpu=cortex-m7",
+        "-mthumb",
+        "-mfpu=fpv5-d16",
+        "-mfloat-abi=hard"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/Core/Inc",
+          "${workspaceFolder}/Drivers/STM32H7xx_HAL_Driver/Inc",
+          "${workspaceFolder}/Drivers/STM32H7xx_HAL_Driver/Inc/Legacy",
+          "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32H7xx/Include",
+          "${workspaceFolder}/Drivers/CMSIS/Include"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    }
+  ],
+  "version": 4
+}

@@ -1,0 +1,55 @@
+CC=arm-none-eabi-gcc
+OBJCOPY=arm-none-eabi-objcopy
+
+STUB_DIR=build/stub_flat
+NAME=h753stub
+ELF=build/$(NAME).elf
+HEX=build/$(NAME).hex
+BIN=build/$(NAME).bin
+LD=STM32H753IIKX_INTFLASH.ld
+
+DEFS= -DINTERNAL_BOOT_STUB=1 -DQSPI_ENABLE_XIP=1 -DQSPI_ENABLE_DEMO=0 -DDATA_CACHE_ENABLE -DINSTRUCTION_CACHE_ENABLE -DCORE_CM7
+INCLUDES= -ICore/Inc -IDrivers/CMSIS/Include -IDrivers/CMSIS/Device/ST/STM32H7xx/Include -IDrivers/STM32H7xx_HAL_Driver/Inc -IDrivers/STM32H7xx_HAL_Driver/Inc/Legacy
+CFLAGS= -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -O2 -ffunction-sections -fdata-sections $(DEFS) $(INCLUDES)
+LDFLAGS= -T$(LD) -Wl,-Map=build/$(NAME).map -Wl,--gc-sections --specs=nosys.specs --specs=nano.specs
+
+CORE_SRCS= boot_xip_stub system_stm32h7xx stm32h7xx_it stm32h7xx_hal_msp gpio quadspi mdma tim sysmem syscalls
+HAL_SRCS= stm32h7xx_hal stm32h7xx_hal_cortex stm32h7xx_hal_dma stm32h7xx_hal_dma_ex stm32h7xx_hal_exti stm32h7xx_hal_flash stm32h7xx_hal_flash_ex stm32h7xx_hal_gpio stm32h7xx_hal_hsem stm32h7xx_hal_mdma stm32h7xx_hal_pwr stm32h7xx_hal_pwr_ex stm32h7xx_hal_qspi stm32h7xx_hal_rcc stm32h7xx_hal_rcc_ex stm32h7xx_hal_tim stm32h7xx_hal_tim_ex stm32h7xx_ll_delayblock
+
+OBJS=$(addprefix $(STUB_DIR)/,$(addsuffix .o,$(CORE_SRCS))) \
+     $(addprefix $(STUB_DIR)/,$(addsuffix .o,$(HAL_SRCS))) \
+     $(STUB_DIR)/startup.o
+
+.PHONY: all clean stub stub_hex stub_bin
+
+all: stub_hex
+
+$(STUB_DIR):
+	@cmd /c if not exist $(STUB_DIR) mkdir $(STUB_DIR)
+
+$(STUB_DIR)/%.o: Core/Src/%.c | $(STUB_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(STUB_DIR)/%.o: Drivers/STM32H7xx_HAL_Driver/Src/%.c | $(STUB_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(STUB_DIR)/startup.o: Core/Startup/startup_stm32h753iikx.s | $(STUB_DIR)
+	$(CC) -mcpu=cortex-m7 -mthumb -c $< -o $@
+
+stub: $(ELF)
+
+$(ELF): $(OBJS) $(LD)
+	$(CC) $(OBJS) $(LDFLAGS) -o $@
+	@echo Created $@
+
+stub_hex: stub
+	$(OBJCOPY) -O ihex $(ELF) $(HEX)
+	@echo Created $(HEX)
+
+stub_bin: stub
+	$(OBJCOPY) -O binary $(ELF) $(BIN)
+	@echo Created $(BIN)
+
+clean:
+	@cmd /c if exist $(STUB_DIR) rmdir /s /q $(STUB_DIR)
+	@cmd /c del /q build\h753stub.* 2>NUL

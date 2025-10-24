@@ -1,0 +1,90 @@
+{
+  "files.associations": {
+    "quadspi.h": "c",
+    "stm32_hal_legacy.h": "c",
+    "stm32h7xx.h": "c",
+    "*.ld": "linkerscript"
+  },
+  "errorLens.enabled": true,
+  "errorLens.gutterIconsEnabled": true,
+  "errorLens.addNumberOfDiagnostics": true,
+  "errorLens.fontStyleItalic": false,
+  "errorLens.margin": "25ch",
+  "C_Cpp.default.includePath": [
+    "${workspaceFolder}/Core/Inc",
+    "${workspaceFolder}/Drivers/STM32H7xx_HAL_Driver/Inc",
+    "${workspaceFolder}/Drivers/STM32H7xx_HAL_Driver/Inc/Legacy",
+    "${workspaceFolder}/Drivers/CMSIS/Include",
+    "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32H7xx/Include"
+  ],
+  "C_Cpp.default.defines": [
+    "USE_HAL_DRIVER",
+    "STM32H753xx",
+    "DEBUG",
+    "QSPI_ENABLE_XIP=1",
+    "QSPI_ENABLE_QUAD=1",
+    "INTERNAL_BOOT_STUB=1"
+  ],
+  "C_Cpp.default.compilerPath": "arm-none-eabi-gcc",
+  "C_Cpp.default.cStandard": "gnu11",
+  "C_Cpp.default.cppStandard": "gnu++17",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 800,
+  "C_Cpp_Runner.cCompilerPath": "gcc",
+  "C_Cpp_Runner.cppCompilerPath": "g++",
+  "C_Cpp_Runner.debuggerPath": "gdb",
+  "C_Cpp_Runner.cStandard": "",
+  "C_Cpp_Runner.cppStandard": "",
+  "C_Cpp_Runner.msvcBatchPath": "",
+  "C_Cpp_Runner.useMsvc": false,
+  "C_Cpp_Runner.warnings": [
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-Wshadow",
+    "-Wformat=2",
+    "-Wcast-align",
+    "-Wconversion",
+    "-Wsign-conversion",
+    "-Wnull-dereference"
+  ],
+  "C_Cpp_Runner.msvcWarnings": [
+    "/W4",
+    "/permissive-",
+    "/w14242",
+    "/w14287",
+    "/w14296",
+    "/w14311",
+    "/w14826",
+    "/w44062",
+    "/w44242",
+    "/w14905",
+    "/w14906",
+    "/w14263",
+    "/w44265",
+    "/w14928"
+  ],
+  "C_Cpp_Runner.enableWarnings": true,
+  "C_Cpp_Runner.warningsAsError": false,
+  "C_Cpp_Runner.compilerArgs": [],
+  "C_Cpp_Runner.linkerArgs": [],
+  "C_Cpp_Runner.includePaths": [],
+  "C_Cpp_Runner.includeSearch": [
+    "*",
+    "**/*"
+  ],
+  "C_Cpp_Runner.excludeSearch": [
+    "**/build",
+    "**/build/**",
+    "**/.*",
+    "**/.*/**",
+    "**/.vscode",
+    "**/.vscode/**"
+  ],
+  "C_Cpp_Runner.useAddressSanitizer": false,
+  "C_Cpp_Runner.useUndefinedSanitizer": false,
+  "C_Cpp_Runner.useLeakSanitizer": false,
+  "C_Cpp_Runner.showCompilationTime": false,
+  "C_Cpp_Runner.useLinkTimeOptimization": false,
+  "C_Cpp_Runner.msvcSecureNoWarnings": false
+}

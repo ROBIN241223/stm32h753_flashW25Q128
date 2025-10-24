@@ -1,0 +1,85 @@
+# POSIX-friendly minimal stub build (internal flash)
+# Usage on Linux:
+#   make -f Makefile.stubposix clean
+#   make -f Makefile.stubposix stub_hex
+
+CC=arm-none-eabi-gcc
+OBJCOPY=arm-none-eabi-objcopy
+CFLAGS= -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -O2 -ffunction-sections -fdata-sections -std=gnu11 \
+	-DUSE_HAL_DRIVER -DSTM32H753xx \
+	-DINTERNAL_BOOT_STUB=1 -DQSPI_ENABLE_XIP=1 -DQSPI_ENABLE_DEMO=0 -DDATA_CACHE_ENABLE -DINSTRUCTION_CACHE_ENABLE -DCORE_CM7 \
+	-ICore/Inc -IDrivers/CMSIS/Include -IDrivers/CMSIS/Device/ST/STM32H7xx/Include -IDrivers/STM32H7xx_HAL_Driver/Inc -IDrivers/STM32H7xx_HAL_Driver/Inc/Legacy
+LDFLAGS= -TSTM32H753IIKX_INTFLASH.ld -Wl,-Map=build/h753stub.map -Wl,--gc-sections --specs=nosys.specs --specs=nano.specs
+
+BUILD=build/stub2
+OBJS= \
+ $(BUILD)/boot_xip_stub.o \
+ $(BUILD)/system_stm32h7xx.o \
+ $(BUILD)/stm32h7xx_it.o \
+ $(BUILD)/stm32h7xx_hal_msp.o \
+ $(BUILD)/gpio.o \
+ $(BUILD)/quadspi.o \
+ $(BUILD)/mdma.o \
+ $(BUILD)/tim.o \
+ $(BUILD)/sysmem.o \
+ $(BUILD)/syscalls.o \
+ $(BUILD)/stm32h7xx_hal.o \
+ $(BUILD)/stm32h7xx_hal_cortex.o \
+ $(BUILD)/stm32h7xx_hal_dma.o \
+ $(BUILD)/stm32h7xx_hal_dma_ex.o \
+ $(BUILD)/stm32h7xx_hal_exti.o \
+ $(BUILD)/stm32h7xx_hal_flash.o \
+ $(BUILD)/stm32h7xx_hal_flash_ex.o \
+ $(BUILD)/stm32h7xx_hal_gpio.o \
+ $(BUILD)/stm32h7xx_hal_hsem.o \
+ $(BUILD)/stm32h7xx_hal_mdma.o \
+ $(BUILD)/stm32h7xx_hal_pwr.o \
+ $(BUILD)/stm32h7xx_hal_pwr_ex.o \
+ $(BUILD)/stm32h7xx_hal_qspi.o \
+ $(BUILD)/stm32h7xx_hal_rcc.o \
+ $(BUILD)/stm32h7xx_hal_rcc_ex.o \
+ $(BUILD)/stm32h7xx_hal_tim.o \
+ $(BUILD)/stm32h7xx_hal_tim_ex.o \
+ $(BUILD)/stm32h7xx_ll_delayblock.o \
+ $(BUILD)/startup_stm32h753iikx.o
+
+ELF=build/h753stub.elf
+HEX=build/h753stub.hex
+BIN=build/h753stub.bin
+
+.PHONY: all stub stub_hex stub_bin clean
+
+all: stub_hex
+
+$(BUILD):
+	@echo "Creating $(BUILD)"
+	@mkdir -p $(BUILD)
+
+$(BUILD)/%.o: Core/Src/%.c | $(BUILD)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD)/%.o: Drivers/STM32H7xx_HAL_Driver/Src/%.c | $(BUILD)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD)/stm32h7xx_ll_delayblock.o: Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_delayblock.c | $(BUILD)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD)/startup_stm32h753iikx.o: Core/Startup/startup_stm32h753iikx.s | $(BUILD)
+	$(CC) -mcpu=cortex-m7 -mthumb -c $< -o $@
+
+stub: $(ELF)
+
+$(ELF): $(OBJS) STM32H753IIKX_INTFLASH.ld
+	$(CC) $(OBJS) $(LDFLAGS) -o $@
+	@echo "Created $@"
+
+stub_hex: stub
+	$(OBJCOPY) -O ihex $(ELF) $(HEX)
+	@echo "Created $(HEX)"
+
+stub_bin: stub
+	$(OBJCOPY) -O binary $(ELF) $(BIN)
+	@echo "Created $(BIN)"
+
+clean:
+	rm -rf $(BUILD) $(ELF) $(HEX) $(BIN) build/h753stub.map
