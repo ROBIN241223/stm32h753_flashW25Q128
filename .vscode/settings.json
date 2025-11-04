@@ -90,5 +90,11 @@
   "C_Cpp_Runner.useLeakSanitizer": false,
   "C_Cpp_Runner.showCompilationTime": false,
   "C_Cpp_Runner.useLinkTimeOptimization": false,
-  "C_Cpp_Runner.msvcSecureNoWarnings": false
+  "C_Cpp_Runner.msvcSecureNoWarnings": false,
+  "gitdoc.enabled": true,
+  "gitdoc.autoCommitDelay": 10000,
+  "gitdoc.commitMessageFormat": "Auto-save: ${files}",
+  "gitdoc.autoPull": "afterDelay",
+  "gitdoc.autoPush": "afterDelay",
+  "gitdoc.pullOnOpen": true
 }

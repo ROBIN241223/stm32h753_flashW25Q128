@@ -4,5 +4,27 @@
         "command": "workbench.action.tasks.runTask",
         "args": "Build (make -j1) with GCC problem matcher",
         "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+p",
+        "command": "git.commitAll"
+    },
+    {
+        "key": "ctrl+shift+u",
+        "command": "git.push"
+    },
+    {
+        "key": "ctrl+shift+g",
+        "command": "workbench.view.scm"
+    },
+    {
+        "key": "f5",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Flash STM32 (ST-Link)"
+    },
+    {
+        "key": "ctrl+alt+s",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Auto Sync to GitHub"
     }
 ]
