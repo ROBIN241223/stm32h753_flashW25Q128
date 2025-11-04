@@ -1,0 +1,5 @@
+../Core/Src/swo.c:5:6:Debug_IsConnected	4	static
+../Core/Src/swo.c:10:6:SWO_Init	24	static
+../Core/Src/swo.c:38:5:SWO_WriteChar	16	static
+../Core/Src/swo.c:46:6:SWO_Print	16	static
+../Core/Src/swo.c:54:5:SWO_Printf	280	static

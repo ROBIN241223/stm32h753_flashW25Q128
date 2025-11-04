@@ -1,0 +1,152 @@
+ARM GAS  /tmp/ccKoB1mQ.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 28, 1
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 1
+  10              		.eabi_attribute 34, 1
+  11              		.eabi_attribute 18, 4
+  12              		.file	"mdma.c"
+  13              		.text
+  14              	.Ltext0:
+  15              		.cfi_sections	.debug_frame
+  16              		.section	.text.MX_MDMA_Init,"ax",%progbits
+  17              		.align	1
+  18              		.global	MX_MDMA_Init
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv5-d16
+  25              	MX_MDMA_Init:
+  26              	.LFB144:
+  27              		.file 1 "Core/Src/mdma.c"
+   1:Core/Src/mdma.c **** /* USER CODE BEGIN Header */
+   2:Core/Src/mdma.c **** /**
+   3:Core/Src/mdma.c ****   ******************************************************************************
+   4:Core/Src/mdma.c ****   * File Name          : mdma.c
+   5:Core/Src/mdma.c ****   * Description        : This file provides code for the configuration
+   6:Core/Src/mdma.c ****   *                      of all the requested global MDMA transfers.
+   7:Core/Src/mdma.c ****   ******************************************************************************
+   8:Core/Src/mdma.c ****   * @attention
+   9:Core/Src/mdma.c ****   *
+  10:Core/Src/mdma.c ****   * Copyright (c) 2025 STMicroelectronics.
+  11:Core/Src/mdma.c ****   * All rights reserved.
+  12:Core/Src/mdma.c ****   *
+  13:Core/Src/mdma.c ****   * This software is licensed under terms that can be found in the LICENSE file
+  14:Core/Src/mdma.c ****   * in the root directory of this software component.
+  15:Core/Src/mdma.c ****   * If no LICENSE file comes with this software, it is provided AS-IS.
+  16:Core/Src/mdma.c ****   *
+  17:Core/Src/mdma.c ****   ******************************************************************************
+  18:Core/Src/mdma.c ****   */
+  19:Core/Src/mdma.c **** /* USER CODE END Header */
+  20:Core/Src/mdma.c **** 
+  21:Core/Src/mdma.c **** /* Includes ------------------------------------------------------------------*/
+  22:Core/Src/mdma.c **** #include "mdma.h"
+  23:Core/Src/mdma.c **** 
+  24:Core/Src/mdma.c **** /* USER CODE BEGIN 0 */
+  25:Core/Src/mdma.c **** 
+  26:Core/Src/mdma.c **** /* USER CODE END 0 */
+  27:Core/Src/mdma.c **** 
+  28:Core/Src/mdma.c **** /*----------------------------------------------------------------------------*/
+  29:Core/Src/mdma.c **** /* Configure MDMA                                                              */
+  30:Core/Src/mdma.c **** /*----------------------------------------------------------------------------*/
+  31:Core/Src/mdma.c **** 
+ARM GAS  /tmp/ccKoB1mQ.s 			page 2
+
+
+  32:Core/Src/mdma.c **** /* USER CODE BEGIN 1 */
+  33:Core/Src/mdma.c **** 
+  34:Core/Src/mdma.c **** /* USER CODE END 1 */
+  35:Core/Src/mdma.c **** 
+  36:Core/Src/mdma.c **** /**
+  37:Core/Src/mdma.c ****   * Enable MDMA controller clock
+  38:Core/Src/mdma.c ****   */
+  39:Core/Src/mdma.c **** void MX_MDMA_Init(void)
+  40:Core/Src/mdma.c **** {
+  28              		.loc 1 40 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 8
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 00B5     		push	{lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 4
+  35              		.cfi_offset 14, -4
+  36 0002 83B0     		sub	sp, sp, #12
+  37              	.LCFI1:
+  38              		.cfi_def_cfa_offset 16
+  41:Core/Src/mdma.c **** 
+  42:Core/Src/mdma.c ****   /* MDMA controller clock enable */
+  43:Core/Src/mdma.c ****   __HAL_RCC_MDMA_CLK_ENABLE();
+  39              		.loc 1 43 3 view .LVU1
+  40              	.LBB2:
+  41              		.loc 1 43 3 view .LVU2
+  42              		.loc 1 43 3 view .LVU3
+  43 0004 0B4B     		ldr	r3, .L3
+  44 0006 D3F8D420 		ldr	r2, [r3, #212]
+  45 000a 42F00102 		orr	r2, r2, #1
+  46 000e C3F8D420 		str	r2, [r3, #212]
+  47              		.loc 1 43 3 view .LVU4
+  48 0012 D3F8D430 		ldr	r3, [r3, #212]
+  49 0016 03F00103 		and	r3, r3, #1
+  50 001a 0193     		str	r3, [sp, #4]
+  51              		.loc 1 43 3 view .LVU5
+  52 001c 019B     		ldr	r3, [sp, #4]
+  53              	.LBE2:
+  54              		.loc 1 43 3 view .LVU6
+  44:Core/Src/mdma.c ****   /* Local variables */
+  45:Core/Src/mdma.c **** 
+  46:Core/Src/mdma.c ****   /* MDMA interrupt initialization */
+  47:Core/Src/mdma.c ****   /* MDMA_IRQn interrupt configuration */
+  48:Core/Src/mdma.c ****   HAL_NVIC_SetPriority(MDMA_IRQn, 5, 0);
+  55              		.loc 1 48 3 view .LVU7
+  56 001e 0022     		movs	r2, #0
+  57 0020 0521     		movs	r1, #5
+  58 0022 7A20     		movs	r0, #122
+  59 0024 FFF7FEFF 		bl	HAL_NVIC_SetPriority
+  60              	.LVL0:
+  49:Core/Src/mdma.c ****   HAL_NVIC_EnableIRQ(MDMA_IRQn);
+  61              		.loc 1 49 3 view .LVU8
+  62 0028 7A20     		movs	r0, #122
+  63 002a FFF7FEFF 		bl	HAL_NVIC_EnableIRQ
+  64              	.LVL1:
+  50:Core/Src/mdma.c **** 
+  51:Core/Src/mdma.c **** }
+ARM GAS  /tmp/ccKoB1mQ.s 			page 3
+
+
+  65              		.loc 1 51 1 is_stmt 0 view .LVU9
+  66 002e 03B0     		add	sp, sp, #12
+  67              	.LCFI2:
+  68              		.cfi_def_cfa_offset 4
+  69              		@ sp needed
+  70 0030 5DF804FB 		ldr	pc, [sp], #4
+  71              	.L4:
+  72              		.align	2
+  73              	.L3:
+  74 0034 00440258 		.word	1476543488
+  75              		.cfi_endproc
+  76              	.LFE144:
+  78              		.text
+  79              	.Letext0:
+  80              		.file 2 "Drivers/CMSIS/Device/ST/STM32H7xx/Include/stm32h753xx.h"
+  81              		.file 3 "/usr/lib/gcc/arm-none-eabi/10.3.1/include/stdint.h"
+  82              		.file 4 "Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_cortex.h"
+ARM GAS  /tmp/ccKoB1mQ.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 mdma.c
+     /tmp/ccKoB1mQ.s:17     .text.MX_MDMA_Init:0000000000000000 $t
+     /tmp/ccKoB1mQ.s:25     .text.MX_MDMA_Init:0000000000000000 MX_MDMA_Init
+     /tmp/ccKoB1mQ.s:74     .text.MX_MDMA_Init:0000000000000034 $d
+
+UNDEFINED SYMBOLS
+HAL_NVIC_SetPriority
+HAL_NVIC_EnableIRQ

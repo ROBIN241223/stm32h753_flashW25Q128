@@ -20,6 +20,7 @@
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MAIN_H
+  void LED_ServiceTask(void);
 #define __MAIN_H
 
 #ifdef __cplusplus

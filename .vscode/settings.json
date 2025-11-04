@@ -3,7 +3,11 @@
     "quadspi.h": "c",
     "stm32_hal_legacy.h": "c",
     "stm32h7xx.h": "c",
-    "*.ld": "linkerscript"
+    "*.ld": "linkerscript",
+    "freertos.h": "c",
+    "task.h": "c",
+    "main.h": "c",
+    "cmsis_os.h": "c"
   },
   "errorLens.enabled": true,
   "errorLens.gutterIconsEnabled": true,

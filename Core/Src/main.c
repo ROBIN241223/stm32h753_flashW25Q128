@@ -17,13 +17,16 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
-#include "cmsis_os.h"
-#include "mdma.h"
-#include "quadspi.h"
-#include "tim.h"
-#include "gpio.h"
-
+#include "../Inc/main.h"
+#include "cmsis_os2.h"
+#include "../Inc/mdma.h"
+#include "../Inc/quadspi.h"
+#include "../Inc/tim.h"
+#include "../Inc/gpio.h"
+//#include "swo.h"
+#include <stdio.h>
+#include <stdbool.h>
+#include "../Inc/swo.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -37,6 +40,29 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+extern unsigned char h753duc_bin[];
+extern unsigned int h753duc_bin_len;
+
+void QSPI_ProgramFullImage(void) {
+  uint32_t addr = 0;
+  uint32_t remain = h753duc_bin_len;
+  uint8_t *P = h753duc_bin;
+  while (remain > 0) {
+    uint32_t chunk = (remain > MEMORY_PAGE_SIZE) ? MEMORY_PAGE_SIZE : remain;
+    QSPI_PageProgram(addr, P, chunk); // or QSPI_WriteBuffer if have
+    addr += chunk;
+    P += chunk;
+    remain -= chunk;
+  }
+}
+
+typedef enum
+{
+  LED_MODE_IDLE = 0U,
+  LED_MODE_DEBUG,
+  LED_MODE_XIP,
+  LED_MODE_PROGRAMMED
+} LedMode_t;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -47,6 +73,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+static LedMode_t g_led_mode = LED_MODE_IDLE;
+static uint8_t swo_ready = 0U;
+static uint32_t swo_last_heartbeat = 0U;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -54,7 +83,8 @@ void SystemClock_Config(void);
 static void MPU_Config(void);
 void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
-
+static void LED_SetMode(LedMode_t mode);
+static void UpdateConnectionIndicators(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -105,9 +135,9 @@ int main(void)
   MX_QUADSPI_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  /* Track SWO attachment and last heartbeat tick for periodic SWV status */
-  uint8_t swo_ready = 0U;
-  uint32_t swo_last_heartbeat = 0U;
+  LED_SetMode(LED_MODE_PROGRAMMED);
+  HAL_Delay(250U);
+  LED_ServiceTask();
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -118,47 +148,11 @@ int main(void)
   osKernelStart();
 
   /* We should never get here as control is now taken by the scheduler */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    if ((!swo_ready) && Debug_IsConnected()) {
-      SWO_Init(SystemCoreClock, 2000000U);
-      swo_ready = 1U;
-      ITM_SendChar('I');
-      ITM_SendChar('T');
-      ITM_SendChar('M');
-      ITM_SendChar(':');
-      ITM_SendChar(' ');
-      SWO_Print("SWO connected\r\n");
-      uint8_t qspi_status = QSPI_LastCheckStatus();
-      if (qspi_status == 0U) {
-        uint8_t mid = 0U, mem_type = 0U, capacity = 0U;
-        if (QSPI_ReadJEDEC_ID(&mid, &mem_type, &capacity) == 0U) {
-          printf("QSPI OK: JEDEC %02X %02X %02X\r\n", mid, mem_type, capacity);
-        } else {
-          printf("QSPI JEDEC read failed\r\n");
-        }
-      } else {
-        printf("QSPI init check failed: %u\r\n", qspi_status);
-      }
-    } else if (swo_ready && (!Debug_IsConnected())) {
-      /* Allow re-init if debugger disconnects and attaches again */
-      swo_ready = 0U;
-      swo_last_heartbeat = 0U;
-    }
-    if (swo_ready) {
-      uint32_t now = HAL_GetTick();
-      if ((now - swo_last_heartbeat) >= 1000U) {
-        printf("SWO heartbeat @%lu ms\r\n", (unsigned long)now);
-        swo_last_heartbeat = now;
-      }
-    }
-    /* USER CODE END WHILE */
+  /* USER CODE END WHILE */
 
-    /* USER CODE BEGIN 3 */
-  }
+  /* USER CODE BEGIN 3 */
   /* USER CODE END 3 */
 }
 
@@ -221,6 +215,86 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+static void LED_SetMode(LedMode_t mode)
+{
+  if (g_led_mode == mode) {
+    return;
+  }
+  g_led_mode = mode;
+  switch (mode) {
+    case LED_MODE_DEBUG:
+      LED_SetRGB(false, false, true);
+      break;
+    case LED_MODE_XIP:
+      LED_SetRGB(false, true, false);
+      break;
+    case LED_MODE_PROGRAMMED:
+      LED_SetRGB(true, false, false);
+      break;
+    case LED_MODE_IDLE:
+    default:
+      LED_AllOff();
+      break;
+  }
+}
+
+static void UpdateConnectionIndicators(void)
+{
+  if (Debug_IsConnected()) {
+    LED_SetMode(LED_MODE_DEBUG);
+    return;
+  }
+  if (QSPI_IsMemoryMapped()) {
+    LED_SetMode(LED_MODE_XIP);
+    return;
+  }
+  LED_SetMode(LED_MODE_IDLE);
+}
+
+void LED_ServiceTask(void)
+{
+  UpdateConnectionIndicators();
+
+  if (Debug_IsConnected()) {
+    if (swo_ready == 0U) {
+      SWO_Init(SystemCoreClock, 2000000U);
+      swo_ready = 1U;
+      swo_last_heartbeat = HAL_GetTick();
+      ITM_SendChar('I');
+      ITM_SendChar('T');
+      ITM_SendChar('M');
+      ITM_SendChar(':');
+      ITM_SendChar(' ');
+      SWO_Print("SWO connected\r\n");
+      uint8_t qspi_status = QSPI_LastCheckStatus();
+      if (qspi_status == 0U) {
+        uint8_t mid = 0U;
+        uint8_t mem_type = 0U;
+        uint8_t capacity = 0U;
+        if (QSPI_ReadJEDEC_ID(&mid, &mem_type, &capacity) == 0U) {
+          printf("QSPI OK: JEDEC %02X %02X %02X\r\n", mid, mem_type, capacity);
+        } else {
+          printf("QSPI JEDEC read failed\r\n");
+        }
+      } else {
+        printf("QSPI init check failed: %u\r\n", qspi_status);
+      }
+    }
+  } else if (swo_ready != 0U) {
+    /* Allow re-init if debugger disconnects and attaches again */
+    swo_ready = 0U;
+    swo_last_heartbeat = 0U;
+  }
+
+  if (swo_ready != 0U) {
+    uint32_t now = HAL_GetTick();
+    if ((now - swo_last_heartbeat) >= 1000U) {
+      printf("SWO heartbeat @%lu ms\r\n", (unsigned long)now);
+      swo_last_heartbeat = now;
+    }
+  }
+}
 
 /* USER CODE END 4 */
 

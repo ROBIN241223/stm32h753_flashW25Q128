@@ -27,4 +27,34 @@
       ]
     }
   ]
+  ,
+  {
+    "name": "Cortex Debug (ST-Link)",
+    "type": "cortex-debug",
+    "request": "launch",
+    "servertype": "stlink",
+    "cwd": "${workspaceFolder}",
+    "executable": "${workspaceFolder}/build/h753duc.elf",
+    "device": "STM32H753IIKx",
+    "runToEntryPoint": "main",
+    "preLaunchTask": "Build Firmware"
+  },
+  {
+    "name": "Flash STM32 (ST-Link)",
+    "type": "cppdbg",
+    "request": "launch",
+    "program": "${workspaceFolder}/build/h753duc.elf",
+    "args": [],
+    "stopAtEntry": false,
+    "cwd": "${workspaceFolder}",
+    "preLaunchTask": "Build Firmware",
+    "miDebuggerServerAddress": "localhost:3333",
+    "miDebuggerPath": "/usr/bin/arm-none-eabi-gdb",
+    "setupCommands": [
+      { "description": "Reset target", "text": "monitor reset halt" },
+      { "description": "Load binary", "text": "load" },
+      { "description": "Run", "text": "continue" }
+    ],
+    "externalConsole": false
+  }
 }

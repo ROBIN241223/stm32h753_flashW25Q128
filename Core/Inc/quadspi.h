@@ -106,9 +106,9 @@ typedef struct __attribute__((packed)) {
 #ifndef W25Q128_CAPACITY_ID
 #define W25Q128_CAPACITY_ID             0x18  /* 128Mbit */
 #endif
-#ifndef W25Q128_ADDRESS_BITS
 #define W25Q128_ADDRESS_BITS            24    /* 24-bit addressing */
-#endif
+#define QSPI_RW_CHUNK_MAX_BYTES     (64U * 1024U)
+#define QSPI_VERIFY_SCRATCH_BYTES   256U
 /* USER CODE END Includes */
 
 extern QSPI_HandleTypeDef hqspi;
@@ -141,4 +141,3 @@ uint8_t  QSPI_VerifyCRC32(uint32_t address, uint32_t length, uint32_t expected_c
 #endif
 
 #endif /* __QUADSPI_H__ */
-

@@ -27,6 +27,7 @@ static uint8_t QSPI_EnableMemoryMapped(void);
 static uint8_t QSPI_EraseSector(uint32_t address);
 static uint8_t QSPI_PageProgram(uint32_t address, const uint8_t *data, uint32_t length);
 void QSPI_FlashDemo(void); /* public demo (could be moved to user code) */
+void QSPI_IndirectModeDemo(void); /* public demo using Indirect Mode only */
 static uint8_t QSPI_SetQEBit(void);
 static uint8_t QSPI_EnableMemoryMappedQuad(void);
 static uint8_t QSPI_ReadStatusReg(uint8_t *sr1);
@@ -43,10 +44,6 @@ static uint8_t qspi_qe_set = 0;
 static uint32_t qspi_crc32_table[256];
 static uint8_t qspi_crc32_table_ready = 0;
 static volatile uint8_t qspi_last_check_status = 0;
-
-#define QSPI_RW_CHUNK_MAX_BYTES   (64U * 1024U)
-#define QSPI_VERIFY_SCRATCH_BYTES 256U
-/* USER CODE END 0 */
 
 QSPI_HandleTypeDef hqspi;
 MDMA_HandleTypeDef hmdma_quadspi_fifo_th;
@@ -740,6 +737,68 @@ uint8_t QSPI_VerifyCRC32(uint32_t address, uint32_t length, uint32_t expected_cr
 uint8_t QSPI_LastCheckStatus(void)
 {
   return qspi_last_check_status;
+}
+
+/* Demo function using Indirect Mode only (no Memory Mapped) */
+/* This demonstrates basic QSPI operations using Indirect Mode as described */
+void QSPI_IndirectModeDemo(void)
+{
+  /* Example: Read JEDEC ID using Indirect Mode */
+  uint8_t mid, mtype, cap;
+  if (QSPI_ReadJEDEC_ID(&mid, &mtype, &cap) == 0) {
+    /* Successfully read JEDEC ID: mid=0xEF for Winbond, mtype=0x40/0x60, cap=0x18 for 128Mbit */
+    /* You can log or use these values for verification */
+  } else {
+    /* JEDEC ID read failed - check QSPI connection */
+    return;
+  }
+
+  /* Example: Write Enable (WREN) - prerequisite for write/erase */
+  if (QSPI_WriteEnable() != 0) {
+    /* Write Enable failed */
+    return;
+  }
+
+  /* Example: Erase a sector (4KB) at address 0x000000 */
+  if (QSPI_EraseSector(0x000000) != 0) {
+    /* Sector erase failed */
+    return;
+  }
+
+  /* Example: Program a page (256 bytes) with test data */
+  uint8_t test_data[MEMORY_PAGE_SIZE];
+  for (uint32_t i = 0; i < MEMORY_PAGE_SIZE; ++i) {
+    test_data[i] = (uint8_t)(i & 0xFF); /* Simple pattern */
+  }
+  if (QSPI_PageProgram(0x000000, test_data, MEMORY_PAGE_SIZE) != 0) {
+    /* Page program failed */
+    return;
+  }
+
+  /* Example: Read back the data using Indirect Mode */
+  uint8_t read_data[MEMORY_PAGE_SIZE];
+  if (QSPI_ReadChunk(0x000000, read_data, MEMORY_PAGE_SIZE) != 0) {
+    /* Read failed */
+    return;
+  }
+
+  /* Verify the data */
+  for (uint32_t i = 0; i < MEMORY_PAGE_SIZE; ++i) {
+    if (read_data[i] != test_data[i]) {
+      /* Verification failed */
+      return;
+    }
+  }
+
+  /* Example: Read Status Register to check if busy */
+  uint8_t sr1;
+  if (QSPI_ReadStatusReg(&sr1) == 0) {
+    if (sr1 & 0x01) {
+      /* Flash is busy - wait or handle */
+    }
+  }
+
+  /* Demo completed successfully */
 }
 
 /* USER CODE END 1 */

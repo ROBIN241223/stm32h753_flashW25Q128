@@ -58,13 +58,10 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOF_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3|GPIO_PIN_4, GPIO_PIN_SET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, LED_RED_PIN | LED_GREEN_PIN | LED_BLUE_PIN, LED_OFF_LEVEL);
 
   /*Configure GPIO pins : PE3 PE4 PE5 */
-  GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5;
+  GPIO_InitStruct.Pin = LED_RED_PIN|LED_GREEN_PIN|LED_BLUE_PIN;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -179,3 +176,42 @@ void MX_GPIO_Init(void)
 /* USER CODE BEGIN 2 */
 
 /* USER CODE END 2 */
+
+/* USER CODE BEGIN 3 */
+static GPIO_PinState prv_led_state(bool on)
+{
+  return on ? LED_ON_LEVEL : LED_OFF_LEVEL;
+}
+
+void LED_SetRed(bool on)
+{
+  HAL_GPIO_WritePin(LED_RED_PORT, LED_RED_PIN, prv_led_state(on));
+}
+
+void LED_SetGreen(bool on)
+{
+  HAL_GPIO_WritePin(LED_GREEN_PORT, LED_GREEN_PIN, prv_led_state(on));
+}
+
+void LED_SetBlue(bool on)
+{
+  HAL_GPIO_WritePin(LED_BLUE_PORT, LED_BLUE_PIN, prv_led_state(on));
+}
+
+void LED_SetRGB(bool red_on, bool green_on, bool blue_on)
+{
+  LED_SetRed(red_on);
+  LED_SetGreen(green_on);
+  LED_SetBlue(blue_on);
+}
+
+void LED_AllOn(void)
+{
+  LED_SetRGB(true, true, true);
+}
+
+void LED_AllOff(void)
+{
+  LED_SetRGB(false, false, false);
+}
+/* USER CODE END 3 */

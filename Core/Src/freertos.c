@@ -22,10 +22,11 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
+#include <stdio.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -54,13 +55,21 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for uartPrintTask */
+osThreadId_t uartPrintTaskHandle;
+const osThreadAttr_t uartPrintTask_attributes = {
+  .name = "uartPrintTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+void StartUartPrintTask(void *argument);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
+void StartUartPrintTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -93,6 +102,8 @@ void MX_FREERTOS_Init(void) {
   /* Create the thread(s) */
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+  /* creation of uartPrintTask */
+  uartPrintTaskHandle = osThreadNew(StartUartPrintTask, NULL, &uartPrintTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -117,13 +128,30 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    LED_ServiceTask();
+    osDelay(50);
   }
   /* USER CODE END StartDefaultTask */
+}
+/* USER CODE BEGIN Header_StartUartPrintTask */
+/**
+  * @brief  Function implementing the uartPrintTask thread.
+  * @param  argument: Not used
+  * @retval None
+  */
+/* USER CODE END Header_StartUartPrintTask */
+void StartUartPrintTask(void *argument)
+{
+  /* USER CODE BEGIN StartUartPrintTask */
+  for(;;)
+  {
+    printf("Hello from FreeRTOS!\r\n");
+    osDelay(1000);
+  }
+  /* USER CODE END StartUartPrintTask */
 }
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
 
 /* USER CODE END Application */
-

@@ -10,6 +10,26 @@
 				"$gcc"
 			],
 			"group": "build"
+		},
+		{
+			"label": "Flash STM32 (ST-Link)",
+			"type": "shell",
+			"command": "st-flash write build/h753duc.bin 0x08000000",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Build Firmware",
+			"type": "shell",
+			"command": "make",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
 		}
 	]
 }

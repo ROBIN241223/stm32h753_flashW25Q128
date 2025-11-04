@@ -29,21 +29,33 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */
+#define LED_RED_PORT   GPIOE
+#define LED_RED_PIN    GPIO_PIN_3
+#define LED_GREEN_PORT GPIOE
+#define LED_GREEN_PIN  GPIO_PIN_4
+#define LED_BLUE_PORT  GPIOE
+#define LED_BLUE_PIN   GPIO_PIN_5
 
+#define LED_OFF_LEVEL   GPIO_PIN_RESET
+#define LED_ON_LEVEL  GPIO_PIN_SET
 /* USER CODE END Private defines */
 
 void MX_GPIO_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+void LED_SetRed(bool on);
+void LED_SetGreen(bool on);
+void LED_SetBlue(bool on);
+void LED_SetRGB(bool red_on, bool green_on, bool blue_on);
+void LED_AllOn(void);
+void LED_AllOff(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }
 #endif
 #endif /*__ GPIO_H__ */
-
