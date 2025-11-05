@@ -1,7 +1,7 @@
 #ifndef COMMAND_INTERPRETER_H
 #define COMMAND_INTERPRETER_H 
 
-#define configCOMMAND_INT_MAX_OUTPUT_SIZE 16384
+#define configCOMMAND_INT_MAX_OUTPUT_SIZE 1024
 
 typedef BaseType_t (*pdCOMMAND_LINE_CALLBACK)( char * pcWriteBuffer, size_t xWriteBufferLen, const char * pcCommandString );
 
