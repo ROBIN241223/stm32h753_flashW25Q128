@@ -7,7 +7,8 @@
     "freertos.h": "c",
     "task.h": "c",
     "main.h": "c",
-    "cmsis_os.h": "c"
+    "cmsis_os.h": "c",
+    "string.h": "c"
   },
   "errorLens.enabled": true,
   "errorLens.gutterIconsEnabled": true,
@@ -96,5 +97,10 @@
   "gitdoc.commitMessageFormat": "Auto-save: ${files}",
   "gitdoc.autoPull": "afterDelay",
   "gitdoc.autoPush": "afterDelay",
-  "gitdoc.pullOnOpen": true
+  "gitdoc.pullOnOpen": true,
+  "serialMonitor.bauds": [
+    115200
+  ],
+  "serialMonitor.defaultBaud": 115200,
+  "serialMonitor.port": "/dev/ttyUSB0"
 }

@@ -79,14 +79,18 @@ int main(void)
     SystemClock_Config(); /* Minimal clock init for stub */
     /* Basic GPIO (optional LED) */
     MX_GPIO_Init();
+    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, LED_OFF_LEVEL);
+    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, LED_OFF_LEVEL);
+    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, LED_OFF_LEVEL);
     /* QUADSPI init will perform JEDEC check and enter memory-mapped if QSPI_ENABLE_XIP=1 */
     MX_QUADSPI_Init();
+    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, LED_ON_LEVEL); /* Indicate boot stub active */
 
-    QSPI_XIP_BootExternal();
+    // QSPI_XIP_BootExternal();
 
     /* Fallback loop: blink LED slowly if jump failed */
     while (1) {
-        HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_10);
+        HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_3);
         HAL_Delay(500);
     }
 }
@@ -134,9 +138,10 @@ void SystemClock_Config(void)
 
 void Error_Handler(void)
 {
-    __disable_irq();
+    // __disable_irq();
     while (1) {
-        /* Trap */
+        HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_5);
+        HAL_Delay(500);
     }
 }
 

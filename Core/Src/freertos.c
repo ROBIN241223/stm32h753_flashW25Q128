@@ -27,6 +27,11 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <stdbool.h>
+#include "gpio.h"
+extern void vCLITask(void *pvParameters);
+extern void vRegisterSampleCLICommands(void);
+extern void vRegisterCustomCLICommands(void);
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -107,6 +112,19 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  
+  /* Register CLI commands */
+  vRegisterSampleCLICommands();
+  vRegisterCustomCLICommands();
+  
+  /* Create CLI task */
+  xTaskCreate(vCLITask, 
+              "CLI", 
+              512,           /* Stack size in words */
+              NULL, 
+              tskIDLE_PRIORITY + 2, 
+              NULL);
+  
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -125,11 +143,29 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-  /* Infinite loop */
+  
+  /* Infinite loop - LED nháy liên tục */
   for(;;)
   {
-    LED_ServiceTask();
-    osDelay(50);
+    // Đỏ ON
+    LED_SetRGB(true, false, false);
+    osDelay(300);
+    
+    // Xanh lá ON
+    LED_SetRGB(false, true, false);
+    osDelay(300);
+    
+    // Xanh dương ON
+    LED_SetRGB(false, false, true);
+    osDelay(300);
+    
+    // Tất cả ON (trắng)
+    LED_SetRGB(true, true, true);
+    osDelay(300);
+    
+    // Tất cả OFF
+    LED_SetRGB(false, false, false);
+    osDelay(300);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -153,5 +189,26 @@ void StartUartPrintTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+
+/* Runtime stats timer configuration for FreeRTOS+CLI */
+static uint32_t ulRunTimeStatsCounter = 0;
+
+void vConfigureTimerForRunTimeStats(void)
+{
+    /* Initialize runtime stats counter */
+    ulRunTimeStatsCounter = 0;
+}
+
+uint32_t ulGetRunTimeCounterValue(void)
+{
+    /* Return runtime counter value (incremented in SysTick) */
+    return ulRunTimeStatsCounter;
+}
+
+/* This should be called from SysTick_Handler or a high-frequency timer */
+void vApplicationTickHook(void)
+{
+    ulRunTimeStatsCounter++;
+}
 
 /* USER CODE END Application */

@@ -224,10 +224,10 @@ static void LED_SetMode(LedMode_t mode)
   g_led_mode = mode;
   switch (mode) {
     case LED_MODE_DEBUG:
-      LED_SetRGB(false, false, true);
+      LED_SetRGB(false, false, false);
       break;
     case LED_MODE_XIP:
-      LED_SetRGB(false, true, false);
+      LED_SetRGB(false, false, false);
       break;
     case LED_MODE_PROGRAMMED:
       LED_SetRGB(true, false, false);

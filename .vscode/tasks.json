@@ -45,6 +45,78 @@
 				"focus": false,
 				"panel": "shared"
 			}
+		},
+		{
+			"label": "Build Bootloader Only",
+			"type": "shell",
+			"command": "make",
+			"args": ["-f", "Makefile.bootloader"],
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build Complete Firmware (Bootloader + App)",
+			"type": "shell",
+			"command": "./build_complete.sh",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "Flash Complete Firmware (HEX)",
+			"type": "shell",
+			"command": "st-flash",
+			"args": ["--format", "ihex", "write", "build/complete_firmware.hex"],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build",
+			"dependsOn": "Build Complete Firmware (Bootloader + App)"
+		},
+		{
+			"label": "Flash Bootloader Only",
+			"type": "shell",
+			"command": "st-flash",
+			"args": ["write", "build/bootloader/bootloader.bin", "0x08000000"],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Flash with ST-Link (Interactive)",
+			"type": "shell",
+			"command": "./flash.sh",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "dedicated"
+			}
+		},
+		{
+			"label": "Build and Flash",
+			"type": "shell",
+			"command": "make clean && make -j4 && st-flash --reset write build/h753duc.bin 0x08000000",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
 		}
 	]
 }

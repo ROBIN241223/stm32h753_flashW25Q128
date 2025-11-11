@@ -64,7 +64,7 @@
 #define configSUPPORT_STATIC_ALLOCATION          1
 #define configSUPPORT_DYNAMIC_ALLOCATION         1
 #define configUSE_IDLE_HOOK                      0
-#define configUSE_TICK_HOOK                      0
+#define configUSE_TICK_HOOK                      1
 #define configCPU_CLOCK_HZ                       ( SystemCoreClock )
 #define configTICK_RATE_HZ                       ((TickType_t)1000)
 #define configMAX_PRIORITIES                     ( 56 )
@@ -172,6 +172,21 @@ standard names. */
 
 /* USER CODE BEGIN Defines */
 /* Section where parameter definitions can be added (for instance, to override default ones in FreeRTOS.h) */
+
+/* FreeRTOS+CLI Configuration */
+#define configCOMMAND_INT_MAX_OUTPUT_SIZE       512
+#define configINCLUDE_QUERY_HEAP_COMMAND        1
+
+/* Enable runtime stats for CLI commands */
+#define configGENERATE_RUN_TIME_STATS           1
+#define configUSE_STATS_FORMATTING_FUNCTIONS    1
+
+/* Runtime stats timer setup (using TIM2 or system tick) */
+extern void vConfigureTimerForRunTimeStats(void);
+extern uint32_t ulGetRunTimeCounterValue(void);
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() vConfigureTimerForRunTimeStats()
+#define portGET_RUN_TIME_COUNTER_VALUE()         ulGetRunTimeCounterValue()
+
 /* USER CODE END Defines */
 
 #endif /* FREERTOS_CONFIG_H */

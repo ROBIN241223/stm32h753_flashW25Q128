@@ -40,8 +40,8 @@ extern "C" {
 #define LED_BLUE_PORT  GPIOE
 #define LED_BLUE_PIN   GPIO_PIN_5
 
-#define LED_OFF_LEVEL   GPIO_PIN_RESET
-#define LED_ON_LEVEL  GPIO_PIN_SET
+#define LED_OFF_LEVEL   GPIO_PIN_SET
+#define LED_ON_LEVEL    GPIO_PIN_RESET
 /* USER CODE END Private defines */
 
 void MX_GPIO_Init(void);
